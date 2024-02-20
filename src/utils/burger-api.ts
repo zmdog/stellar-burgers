@@ -1,5 +1,5 @@
 import { setCookie, getCookie } from './cookie';
-import { TIngredient, TOrder, TUser } from './types';
+import { TIngredient, TOrder, TOrdersData, TUser } from './types';
 
 const URL = process.env.BURGER_API_URL;
 
@@ -35,6 +35,8 @@ export const refreshToken = (): Promise<TRefreshResponse> =>
       return refreshData;
     });
 
+/* Это предпочтительны способ обновления токена, но допустимы и другие, главное,
+что бы обновление токена работало корректно */
 export const fetchWithRefresh = async <T>(
   url: RequestInfo,
   options: RequestInit
@@ -61,10 +63,14 @@ type TIngredientsResponse = TServerResponse<{
   data: TIngredient[];
 }>;
 
-export type TFeedsResponse = TServerResponse<{
+type TFeedsResponse = TServerResponse<{
   orders: TOrder[];
   total: number;
   totalToday: number;
+}>;
+
+type TOrdersResponse = TServerResponse<{
+  data: TOrder[];
 }>;
 
 export const getIngredientsApi = () =>
@@ -95,7 +101,7 @@ export const getOrdersApi = () =>
     return Promise.reject(data);
   });
 
-export type TNewOrderResponse = TServerResponse<{
+type TNewOrderResponse = TServerResponse<{
   order: TOrder;
   name: string;
 }>;
@@ -133,7 +139,7 @@ export type TRegisterData = {
   password: string;
 };
 
-export type TAuthResponse = TServerResponse<{
+type TAuthResponse = TServerResponse<{
   refreshToken: string;
   accessToken: string;
   user: TUser;
@@ -200,7 +206,7 @@ export const resetPasswordApi = (data: { password: string; token: string }) =>
       return Promise.reject(data);
     });
 
-export type TUserResponse = TServerResponse<{ user: TUser }>;
+type TUserResponse = TServerResponse<{ user: TUser }>;
 
 export const getUserApi = () =>
   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {

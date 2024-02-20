@@ -1,9 +1,6 @@
 import { FC } from 'react';
 
-import { TOrder, TFeed } from '@utils-types';
-import { FeedInfoUI, Preloader } from '@ui';
-import { useSelector } from '../../services/store';
-import { getFeed, getOrdersAll } from '../../slices/ordersSlice';
+import { TOrder } from '@utils-types';
 
 const getOrders = (orders: TOrder[], status: string): number[] =>
   orders
@@ -11,21 +8,17 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
     .map((item) => item.number)
     .slice(0, 20);
 
-export const FeedInfo: FC = () => {
-  const orders: TOrder[] = useSelector<TOrder[]>(getOrdersAll);
-  const feed: TFeed = useSelector<TFeed>(getFeed);
+export const FeedInfo: FC = () =>
+  // const readyOrders = getOrders(orders, 'done');
 
-  const readyOrders = getOrders(orders, 'done');
+  // const pendingOrders = getOrders(orders, 'pending');
 
-  const pendingOrders = getOrders(orders, 'pending');
+  // return (
+  //   <FeedInfoUI
+  //     readyOrders={readyOrders}
+  //     pendingOrders={pendingOrders}
+  //     feed={feed}
+  //   />
+  // );
 
-  return !orders.length ? (
-    <Preloader />
-  ) : (
-    <FeedInfoUI
-      readyOrders={readyOrders}
-      pendingOrders={pendingOrders}
-      feed={feed}
-    />
-  );
-};
+  null;

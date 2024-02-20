@@ -10,7 +10,6 @@ export type TIngredient = {
   image: string;
   image_large: string;
   image_mobile: string;
-  key?: string;
 };
 
 export type TConstructorIngredient = TIngredient & {
@@ -25,7 +24,6 @@ export type TOrder = {
   updatedAt: string;
   number: number;
   ingredients: string[];
-  key?: string;
 };
 
 export type TOrdersData = {
@@ -40,23 +38,3 @@ export type TUser = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
-
-export type TConstructorItems = {
-  bun?: TIngredient;
-  ingredients: TIngredient[];
-};
-
-export type TFeed = {
-  total: number;
-  totalToday: number;
-};
-
-export type TOrders = {
-  orders: TOrder[];
-  feed: TFeed;
-};
-
-export type TCurrentOrder = {
-  name: string;
-  number: number;
-};
