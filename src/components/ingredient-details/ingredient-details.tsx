@@ -1,14 +1,10 @@
 import { FC } from 'react';
-import { Preloader } from '../ui/preloader';
-import { IngredientDetailsUI } from '../ui/ingredient-details';
 
-export const IngredientDetails: FC = () => {
-  /** TODO: взять переменную из стора */
-  const ingredientData = null;
+export const IngredientDetails: FC = () =>
+  // if (!ingredientData) {
+  //   return <Preloader />;
+  // }
 
-  if (!ingredientData) {
-    return <Preloader />;
-  }
+  // return <IngredientDetailsUI ingredientData={ingredientData} />;
 
-  return <IngredientDetailsUI ingredientData={ingredientData} />;
-};
+  null;

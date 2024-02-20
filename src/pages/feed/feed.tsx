@@ -1,15 +1,10 @@
-import { Preloader } from '@ui';
-import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
 import { FC } from 'react';
 
-export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+export const Feed: FC = () =>
+  // if (!orders.length) {
+  //   return <Preloader />;
+  // }
 
-  if (!orders.length) {
-    return <Preloader />;
-  }
+  // return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
-};
+  null;
