@@ -4,6 +4,10 @@
   justify-content: flex-end;
 }
 
+.element:hover {
+  cursor: pointer;
+}
+
 .element:last-child {
   margin-bottom: 0;
 }
