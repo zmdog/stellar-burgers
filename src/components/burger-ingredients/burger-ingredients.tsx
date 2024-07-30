@@ -2,13 +2,22 @@ import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { TTabMode } from '@utils-types';
-import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+import { BurgerIngredientsUI } from '@ui';
+
+import { TIngredient } from '@utils-types';
+import { useSelector } from '../../services/store';
+import {
+  selectBuns,
+  selectMains,
+  selectSauces,
+  selectIsFetching
+} from '../../slices/ingredientsSlice';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-  const buns = [];
-  const mains = [];
-  const sauces = [];
+  const buns: TIngredient[] = useSelector<TIngredient[]>(selectBuns);
+  const mains: TIngredient[] = useSelector<TIngredient[]>(selectMains);
+  const sauces: TIngredient[] = useSelector<TIngredient[]>(selectSauces);
+  const isIngredientsLoading: boolean = useSelector<boolean>(selectIsFetching);
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -18,22 +27,21 @@ export const BurgerIngredients: FC = () => {
   const [bunsRef, inViewBuns] = useInView({
     threshold: 0
   });
-
   const [mainsRef, inViewFilling] = useInView({
     threshold: 0
   });
-
   const [saucesRef, inViewSauces] = useInView({
     threshold: 0
   });
-
   useEffect(() => {
-    if (inViewBuns) {
-      setCurrentTab('bun');
-    } else if (inViewSauces) {
-      setCurrentTab('sauce');
-    } else if (inViewFilling) {
-      setCurrentTab('main');
+    if (!isIngredientsLoading) {
+      if (inViewBuns) {
+        setCurrentTab('bun');
+      } else if (inViewSauces) {
+        setCurrentTab('sauce');
+      } else if (inViewFilling) {
+        setCurrentTab('main');
+      }
     }
   }, [inViewBuns, inViewFilling, inViewSauces]);
 
@@ -46,8 +54,6 @@ export const BurgerIngredients: FC = () => {
     if (tab === 'sauce')
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  return null;
 
   return (
     <BurgerIngredientsUI
