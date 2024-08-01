@@ -32,16 +32,25 @@ const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    setBurgerConstructor: (sliceState, action: PayloadAction<string>) => {
-      const ingredient = sliceState.ingredients.find(
-        (ingredient: TIngredient) => ingredient._id === action.payload
-      );
+    setBurgerConstructor: {
+      reducer: (
+        sliceState,
+        action: PayloadAction<{ id: string; key: string }>
+      ) => {
+        const ingredient = sliceState.ingredients.find(
+          (ingredient: TIngredient) => ingredient._id === action.payload.id
+        );
 
-      if (ingredient && ingredient.type === 'bun')
-        sliceState.constructorItems.bun = ingredient;
-      if (ingredient && ['sauce', 'main'].includes(ingredient.type)) {
-        ingredient.key = nanoid();
-        sliceState.constructorItems.ingredients.push(ingredient);
+        if (ingredient && ingredient.type === 'bun')
+          sliceState.constructorItems.bun = ingredient;
+        if (ingredient && ['sauce', 'main'].includes(ingredient.type)) {
+          ingredient.key = action.payload.key;
+          sliceState.constructorItems.ingredients.push(ingredient);
+        }
+      },
+      prepare: (id: string) => {
+        const key = nanoid();
+        return { payload: { id, key } };
       }
     },
     moveIngredientUp: (sliceState, action: PayloadAction<string>) => {
