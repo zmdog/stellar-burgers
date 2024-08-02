@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from '../../services/store';
 import { useEffect } from 'react';
 import {
   fetchUserLoginWithRefresh,
-  getIsAuth,
   getIsAuthChecked
 } from '../../slices/authSlice';
 import { getOrderData } from '../../slices/ordersSlice';
@@ -30,7 +29,6 @@ const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const background = location.state?.background;
-  const isAuth = useSelector<boolean>(getIsAuth);
   const isAuthChecked = useSelector<boolean>(getIsAuthChecked);
   const orderNumber: TOrder | undefined = useSelector<TOrder | undefined>(
     getOrderData
@@ -41,47 +39,50 @@ const App = () => {
     dispatch(fetchIngredients());
     getCookie('accessToken') && dispatch(fetchUserLoginWithRefresh());
   }, []);
-
   return (
     <>
       <Routes location={background || location}>
         <Route path={'/'} element={<Layout />}>
           <Route index element={<ConstructorPage />} />
           <Route path={'ingredients/:id'} element={<IngredientDetails />} />
-          <Route path={'feed'} element={<Feed />}>
-            <Route path={':number'} element={<OrderInfo />} />
-          </Route>
+          <Route path={'feed'} element={<Feed />} />
+          <Route path={'feed/:number'} element={<OrderInfo />} />
+          <Route
+            path={'profile/orders'}
+            element={
+              <ProtectedRoute
+                anonymous={false}
+                isChecked={isAuthChecked}
+                children={<ProfileOrders />}
+              />
+            }
+          />
+          <Route
+            path={'profile/orders/:number'}
+            element={
+              <ProtectedRoute
+                anonymous={false}
+                isChecked={isAuthChecked}
+                children={<OrderInfo />}
+              />
+            }
+          />
           <Route
             path={'profile'}
             element={
               <ProtectedRoute
-                isState={!isAuth}
+                anonymous={false}
                 isChecked={isAuthChecked}
-                route={'/login'}
                 children={<Profile />}
               />
             }
           />
           <Route
-            path={'profile/orders'}
-            element={
-              <ProtectedRoute
-                isState={!isAuth}
-                isChecked={isAuthChecked}
-                route={'/login'}
-                children={<ProfileOrders />}
-              />
-            }
-          >
-            <Route path={':number'} element={<OrderInfo />} />
-          </Route>
-          <Route
             path={'login'}
             element={
               <ProtectedRoute
-                isState={isAuth}
+                anonymous
                 isChecked={isAuthChecked}
-                route={'/'}
                 children={<Login />}
               />
             }
@@ -90,9 +91,8 @@ const App = () => {
             path={'register'}
             element={
               <ProtectedRoute
-                isState={isAuth}
+                anonymous
                 isChecked={isAuthChecked}
-                route={'/'}
                 children={<Register />}
               />
             }

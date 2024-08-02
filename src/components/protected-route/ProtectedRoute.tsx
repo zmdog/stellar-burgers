@@ -1,19 +1,32 @@
 import { ReactElement } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Preloader } from '@ui';
+import { useSelector } from '../../services/store';
+import { getIsAuth } from '../../slices/authSlice';
 
 type ProtectedRouteProps = {
+  anonymous: boolean;
   children: ReactElement;
-  isState: boolean;
   isChecked?: boolean;
-  route: string;
 };
 export const ProtectedRoute = ({
+  anonymous,
   children,
-  isState,
-  isChecked,
-  route
+  isChecked
 }: ProtectedRouteProps) => {
+  const isAuth = useSelector<boolean>(getIsAuth);
+  const location = useLocation();
+  const from = location.state?.from || '/';
+
   if (isChecked) return <Preloader />;
-  return isState ? <Navigate to={route} /> : <>{children}</>;
+
+  if (anonymous && isAuth) {
+    return <Navigate to={from} />;
+  }
+
+  if (!anonymous && !isAuth) {
+    return <Navigate to='/login' state={{ from: location }} />;
+  }
+
+  return children;
 };
