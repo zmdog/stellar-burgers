@@ -67,7 +67,6 @@ const ordersSlice = createSlice({
       .addCase(
         fetchOrder.fulfilled,
         (sliceState: IOrders, action: PayloadAction<TNewOrderResponse>) => {
-          console.log(action.payload);
           sliceState.currentOrder = action.payload.order;
           sliceState.isFetching = false;
         }
