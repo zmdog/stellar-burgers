@@ -1,11 +1,12 @@
 import { FC, useMemo } from 'react';
-import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
+import { TConstructor, TIngredient, TOrder } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import {
   getConstructorItems,
   clearBurgerConstructor,
   setBurgerConstructor
-} from '../../slices/ingredientsSlice';
+} from '../../slices/constructorSlice';
+
 import {
   getCurrentOrder,
   getOrderStatus,
@@ -20,13 +21,13 @@ import { useDrop } from 'react-dnd';
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const constructorItems: TConstructorItems =
-    useSelector<TConstructorItems>(getConstructorItems);
-  const onDropHandler = (id: string) => dispatch(setBurgerConstructor(id));
+  const constructorItems = useSelector<TConstructor>(getConstructorItems);
+  const onDropHandler = (ingredient: TIngredient) =>
+    dispatch(setBurgerConstructor(ingredient));
   const [, dropTarget] = useDrop({
     accept: 'ingredient',
     drop(ingredient: TIngredient) {
-      onDropHandler(ingredient._id);
+      onDropHandler(ingredient);
     }
   });
 

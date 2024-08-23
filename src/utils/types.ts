@@ -13,6 +13,13 @@ export type TIngredient = {
   key?: string;
 };
 
+export type TIngredients = {
+  ingredients: TIngredient[];
+  error?: string;
+  isFetching: boolean;
+  currentIngredientFromPath?: TIngredient;
+};
+
 export type TConstructorIngredient = TIngredient & {
   id: string;
 };
@@ -41,8 +48,8 @@ export type TUser = {
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
 
-export type TConstructorItems = {
-  bun?: TIngredient;
+export type TConstructor = {
+  bun: TIngredient | null;
   ingredients: TIngredient[];
 };
 
@@ -51,12 +58,23 @@ export type TFeed = {
   totalToday: number;
 };
 
-export type TOrders = {
+export interface IOrders {
   orders: TOrder[];
   feed: TFeed;
-};
+  currentOrder: TOrder | null;
+  isFetching: boolean;
+  error?: string;
+  currentOrderFromPath?: TOrder;
+}
 
 export type TCurrentOrder = {
   name: string;
   number: number;
+};
+
+export type TAuth = {
+  user: TUser;
+  isAuth: boolean;
+  error?: string;
+  isFetching: boolean;
 };
