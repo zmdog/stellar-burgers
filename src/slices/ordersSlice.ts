@@ -1,24 +1,12 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { TOrder } from '@utils-types';
+import { TOrder, TFeed, IOrders } from '@utils-types';
 import {
   getFeedsApi,
   getOrdersApi,
   orderBurgerApi,
   TFeedsResponse,
   TNewOrderResponse
-} from '@api';
-
-type TFeed = {
-  total: number;
-  totalToday: number;
-};
-interface IOrders {
-  orders: TOrder[];
-  feed: TFeed;
-  currentOrder: TOrder | null;
-  isFetching: boolean;
-  currentOrderFromPath?: TOrder;
-}
+} from '../utils/burger-api';
 
 const initialState: IOrders = {
   orders: [],
@@ -72,18 +60,21 @@ const ordersSlice = createSlice({
         sliceState.isFetching = true;
       })
       .addCase(fetchOrder.rejected, (sliceState, action) => {
+        sliceState.error = 'Не смогли оформить заказ: ' + action.error.message;
         alert('Не смогли оформить заказ: ' + action.error.message);
         sliceState.isFetching = false;
       })
       .addCase(
         fetchOrder.fulfilled,
         (sliceState: IOrders, action: PayloadAction<TNewOrderResponse>) => {
+          console.log(action.payload);
           sliceState.currentOrder = action.payload.order;
           sliceState.isFetching = false;
         }
       )
       //////////////////////////////
       .addCase(fetchOrders.rejected, (sliceState, action) => {
+        sliceState.error = 'Заказы не дошли: ' + action.error.message;
         alert('Заказы не дошли: ' + action.error.message);
         sliceState.isFetching = false;
       })
@@ -100,6 +91,7 @@ const ordersSlice = createSlice({
         sliceState.isFetching = true;
       })
       .addCase(fetchOrdersUser.rejected, (sliceState, action) => {
+        sliceState.error = 'Заказы не дошли: ' + action.error.message;
         alert('Заказы не дошли: ' + action.error.message);
         sliceState.isFetching = false;
       })

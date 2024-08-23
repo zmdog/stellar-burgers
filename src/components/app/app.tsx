@@ -13,7 +13,7 @@ import { Modal, OrderInfo, IngredientDetails, Layout } from '@components';
 import '../../index.css';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   fetchUserLoginWithRefresh,
   getIsAuthChecked
@@ -26,6 +26,7 @@ import { fetchIngredients } from '../../slices/ingredientsSlice';
 import { useOrders } from '../../hooks/useOrders';
 
 const App = () => {
+  const dataFetch = useRef(false);
   const dispatch = useDispatch();
   const location = useLocation();
   const background = location.state?.background;
@@ -36,6 +37,8 @@ const App = () => {
   const handleClose = () => history.back();
   useOrders(location.pathname);
   useEffect(() => {
+    if (dataFetch.current) return;
+    dataFetch.current = true;
     dispatch(fetchIngredients());
     getCookie('accessToken') && dispatch(fetchUserLoginWithRefresh());
   }, []);

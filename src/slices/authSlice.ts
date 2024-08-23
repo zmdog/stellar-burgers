@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { TUser } from '@utils-types';
+import { TUser, TAuth } from '@utils-types';
 import {
   loginUserApi,
   logoutApi,
@@ -10,23 +10,15 @@ import {
   updateUserApi,
   TAuthResponse,
   TUserResponse
-} from '@api';
-import { setCookie } from '../utils/cookie';
+} from '../utils/burger-api';
+import { getCookie, setCookie } from '../utils/cookie';
 
-interface IAuth {
-  user: TUser;
-  isAuth: boolean;
-  isAuthChecked: boolean;
-  isFetching: boolean;
-}
-
-const initialState: IAuth = {
+const initialState: TAuth = {
   user: {
     email: '',
     name: ''
   },
   isAuth: false,
-  isAuthChecked: false,
   isFetching: false
 };
 
@@ -55,20 +47,26 @@ export const fetchUserLoginWithRefresh = createAsyncThunk(
 );
 
 const login = (
-  sliceState: IAuth,
+  sliceState: TAuth,
   action: PayloadAction<TAuthResponse | TUserResponse>
 ) => {
   sliceState.user.name = action.payload.user.name;
   sliceState.user.email = action.payload.user.email;
   sliceState.isAuth = true;
+  sliceState.isFetching = false;
 };
-const logout = (sliceState: IAuth) => {
+const logout = (sliceState: TAuth) => {
   setCookie('accessToken', '');
   localStorage.setItem('refreshToken', '');
   sliceState.user.name = '';
   sliceState.user.email = '';
+  sliceState.error = '';
   sliceState.isAuth = false;
-  sliceState.isAuthChecked = false;
+  sliceState.isFetching = false;
+};
+
+const refreshToken = (refreshToken: string) => {
+  localStorage.setItem('refreshToken', refreshToken);
 };
 
 const authSlice = createSlice({
@@ -78,80 +76,82 @@ const authSlice = createSlice({
   selectors: {
     getIsAuth: (sliceState): boolean => sliceState.isAuth,
     getUser: (sliceState): TUser => sliceState.user,
-    getIsAuthChecked: (sliceState): boolean => sliceState.isAuthChecked
+    getIsAuthChecked: (sliceState): boolean => sliceState.isFetching
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserRegistration.pending, (sliceState) => {
-        sliceState.isAuthChecked = true;
+        sliceState.isFetching = true;
       })
       .addCase(fetchUserRegistration.rejected, (sliceState, action) => {
-        alert('регистрация не удалась: ' + action.error.message);
-        sliceState.isAuthChecked = false;
+        sliceState.error = 'Регистрация не удалась: ' + action.error.message;
+        alert('Регистрация не удалась: ' + action.error.message);
+        sliceState.isFetching = false;
       })
       .addCase(
         fetchUserRegistration.fulfilled,
         (sliceState, action: PayloadAction<TAuthResponse>) => {
-          localStorage.setItem('refreshToken', action.payload.refreshToken);
+          refreshToken(action.payload.refreshToken);
           setCookie('accessToken', action.payload.accessToken);
           login(sliceState, action);
-          sliceState.isAuthChecked = false;
         }
       )
       //////////////////////////////
       .addCase(fetchUserLogin.pending, (sliceState) => {
-        sliceState.isAuthChecked = true;
+        sliceState.isFetching = true;
       })
       .addCase(fetchUserLogin.rejected, (sliceState, action) => {
-        alert('вход не удался: ' + action.error.message);
-        sliceState.isAuthChecked = false;
+        sliceState.error = 'Вход не удался: ' + action.error.message;
+        alert('Вход не удался: ' + action.error.message);
+        sliceState.isFetching = false;
       })
       .addCase(
         fetchUserLogin.fulfilled,
         (sliceState, action: PayloadAction<TAuthResponse>) => {
-          localStorage.setItem('refreshToken', action.payload.refreshToken);
+          refreshToken(action.payload.refreshToken);
           setCookie('accessToken', action.payload.accessToken);
           login(sliceState, action);
-          sliceState.isAuthChecked = false;
         }
       )
       //////////////////////////////
       .addCase(fetchUserLogout.pending, (sliceState) => {
-        sliceState.isAuthChecked = true;
+        sliceState.isFetching = true;
       })
       .addCase(fetchUserLogout.rejected, (sliceState, action) => {
-        alert('выход не удался: ' + action.error.message);
-        sliceState.isAuthChecked = false;
+        sliceState.error = 'Выход не удался: ' + action.error.message;
+        alert('Выход не удался: ' + action.error.message);
+        sliceState.isFetching = false;
       })
       .addCase(fetchUserLogout.fulfilled, (sliceState) => {
         logout(sliceState);
-        sliceState.isAuthChecked = false;
+        sliceState.isFetching = false;
       })
       //////////////////////////////
       .addCase(fetchUserLoginWithRefresh.pending, (sliceState) => {
-        sliceState.isAuthChecked = true;
+        sliceState.isFetching = true;
       })
       .addCase(fetchUserLoginWithRefresh.rejected, (sliceState, action) => {
+        sliceState.error = 'Вход не удался: ' + action.error.message;
         alert('вход не удался: ' + action.error.message);
-        sliceState.isAuthChecked = false;
+        sliceState.isFetching = false;
       })
       .addCase(fetchUserLoginWithRefresh.fulfilled, (sliceState, action) => {
         login(sliceState, action);
-        sliceState.isAuthChecked = false;
       })
       //////////////////////////////
       .addCase(fetchUserUpdate.pending, (sliceState) => {
-        sliceState.isAuthChecked = true;
+        sliceState.isFetching = true;
       })
       .addCase(fetchUserUpdate.rejected, (sliceState, action) => {
-        alert('не удалось обновить данные: ' + action.error.message);
-        sliceState.isAuthChecked = false;
+        sliceState.error =
+          'Не удалось обновить данные: ' + action.error.message;
+        alert('Не удалось обновить данные: ' + action.error.message);
+        sliceState.isFetching = false;
       })
       .addCase(
         fetchUserUpdate.fulfilled,
         (sliceState, action: PayloadAction<TUserResponse>) => {
           login(sliceState, action);
-          sliceState.isAuthChecked = false;
         }
       );
   }

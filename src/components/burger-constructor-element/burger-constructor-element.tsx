@@ -6,17 +6,17 @@ import {
   moveIngredientUp,
   moveIngredientDown,
   deleteIngredient
-} from '../../slices/ingredientsSlice';
+} from '../../slices/constructorSlice';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
   ({ ingredient, index, totalItems }) => {
     const dispatch = useDispatch();
     const handleMoveDown = () => {
-      dispatch(moveIngredientDown(ingredient.key!));
+      dispatch(moveIngredientDown(index));
     };
 
     const handleMoveUp = () => {
-      dispatch(moveIngredientUp(ingredient.key!));
+      dispatch(moveIngredientUp(index));
     };
 
     const handleClose = () => {

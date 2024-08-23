@@ -6,7 +6,7 @@ import { MoveButton } from '@zlden/react-developer-burger-ui-components';
 import { useDrag } from 'react-dnd';
 import { useDrop } from 'react-dnd';
 import { TIngredient } from '@utils-types';
-import { moveIngredientDnd } from '../../../slices/ingredientsSlice';
+import { moveIngredientDnd } from '../../../slices/constructorSlice';
 import { useDispatch } from '../../../services/store';
 
 export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
@@ -20,8 +20,8 @@ export const BurgerConstructorElementUI: FC<BurgerConstructorElementUIProps> =
       handleClose
     }) => {
       const dispatch = useDispatch();
-      const onDropHandler = (id: string) =>
-        dispatch(moveIngredientDnd([id, ingredient.key!]));
+      const onDropHandler = (key: string) =>
+        dispatch(moveIngredientDnd([key, ingredient.key!]));
       const [{ isDrag }, dragRef] = useDrag({
         type: 'ingredientConstructor',
         item: ingredient,
