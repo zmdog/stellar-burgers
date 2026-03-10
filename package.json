@@ -14,7 +14,7 @@
     "@zlden/react-developer-burger-ui-components": "^1.15.0",
     "array-move": "^4.0.0",
     "clsx": "^2.0.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
@@ -100,7 +100,8 @@
     "lint:fix": "npm run lint -- --fix",
     "cypress:open": "cypress open",
     "format": "prettier ./src --write",
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack --mode=production --node-env=production"
   },
   "eslintConfig": {
     "extends": [
