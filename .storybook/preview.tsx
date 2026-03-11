@@ -14,7 +14,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <HashRouter>
+      <HashRouter basename="/stellar-burgers">
         <div style={{ padding: 20, width: 'fit-content' }}>
           <Story />
         </div>
